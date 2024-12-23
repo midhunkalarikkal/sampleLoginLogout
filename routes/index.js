@@ -179,21 +179,18 @@ router.post("/login", (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user with matching email and password
     const user = users.find(
       (user) => user.email === email && user.password === password
     );
 
     if (user) {
       req.session.user = user.email;
-      // Send success response
       return res.json({
         success: true,
         message: "Login successful! Redirecting...",
         redirectUrl: "/home",
       });
     } else {
-      // Send error response
       return res.json({
         success: false,
         message: "Invalid username or password",
