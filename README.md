@@ -7,7 +7,15 @@
 ⛔ Middleware to protect routes
 🖥️ Dynamic pages using EJS
 🚫 Prevent caching to enhance security
+
 🛠️ Technologies Used
+
 Node.js
 Express
 EJS
+
+📊 Sample user data
+📧 Email: sampleuser@gmail.com
+🔑 Password: Sample@123
+
+This project was a great learning experience and helped me dive deeper into building secure and dynamic web applications.
