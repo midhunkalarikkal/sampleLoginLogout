@@ -11,6 +11,28 @@
   .custom-text-color {
     color: #2b7ffe;
   }
+
+  h2 {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    color: #333;
+}
+
+.accordion-button {
+    background-color: #f8f9fa;
+    color: #007bff;
+    font-weight: 500;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-body {
+    font-size: 0.95rem;
+    color: #555;
+}
+
   
   @media (min-width: 768px) {
     .news-input{
