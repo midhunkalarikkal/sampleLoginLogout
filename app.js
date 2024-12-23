@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const mongoose = require('mongoose');
 require('dotenv').config();
-const MongoStore = require('connect-mongo');
 
 var app = express();
 var createError = require('http-errors');
@@ -27,10 +26,6 @@ app.use(
     secret: process.env.SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.DB_URI,
-      ttl: 24 * 60 * 60,
-    }),
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === 'production', 
@@ -41,7 +36,6 @@ app.use(
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 
 app.use((req, res, next) => {
   if (req.session.message) {
