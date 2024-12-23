@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Home page</title>
+    <title>CRUD App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='/static/stylesheets/home.css' />
     <link rel="icon" type="image/x-icon" href="/static/images/nodejs.png">
@@ -39,11 +39,7 @@
             </div>
         </div>
     </nav>
-    <!--Navbar-->
 
-
-
-    <!--Showcase-->
     <section class="bg-dark text-light p-5 text-center text-sm-start p-lg-0 pt-lg-5">
         <div class="container">
             <div class="d-sm-flex align-items-center justify-content-between">
@@ -59,10 +55,7 @@
             </div>
         </div>
     </section>
-    <!--Showcase-->
 
-
-    <!--Boxes-->
     <section class="p-5">
         <div class="container">
             <div class="row text-center g-4">
@@ -89,9 +82,7 @@
             </div>
         </div>
     </section>
-    <!--Boxes-->
 
-    <!--Learn section-->
     <section class="p-5" id="learn">
         <div class="container">
             <div class="row align-items-center justify-items-between">
@@ -114,7 +105,6 @@
 
 
     <div class="container">
-
         <div class="table-responsive ">
             <% if(userList !="" ){ %>
                 <table class="table table-stripped text-center my-4">
@@ -154,14 +144,13 @@
                                     </a>
                                 </td>
                             </tr>
-                            <% }) %>
+                        <% }) %>
                     </tbody>
                 </table>
-                <% } %>
+            <% } %>
         </div>
     </div>
 
-    <!--Footer section-->
     <footer class="p-3 bg-dark text-center text-white position-relative">
         <div class="container">
             <p><a href="https://github.com/midhunkalarikkal" style="text-decoration: none; color: white">Developed by
@@ -171,7 +160,6 @@
             </a>
         </div>
     </footer>
-    <!--Footer section-->
 
     <!-- Modal for adding new user -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">

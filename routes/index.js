@@ -4,6 +4,8 @@ const User = require("../models/users");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const Logins = require('../models/logins');
+const bcrypt = require('bcrypt');
 const { langs, cards, users } = require("../data");
 
 //image upload
@@ -174,6 +176,10 @@ router.get("/", (req, res) => {
   return res.render("index");
 });
 
+router.get('/signup',(req,res) => {
+  return res.render("signup");
+})
+
 // Login route
 router.post("/login", (req, res) => {
   try {
@@ -197,13 +203,45 @@ router.post("/login", (req, res) => {
       });
     }
   } catch (err) {
-    console.error("Error during login:", err);
     res.status(500).json({
       success: false,
       message: "Server error, please try again later",
     });
   }
 });
+
+router.post('/signup', async(req,res) => {
+  try{
+
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Please fill out all fields!' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Email already registered!' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new Logins({ name, email, password: hashedPassword });
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: 'Signup successful! Redirecting...',
+      redirectUrl: '/',
+    });
+
+  }catch(err){
+    res.status(500).json({
+      success: false,
+      message: "Server error, please try again later",
+    });
+  }
+})
 
 // Home route (requires login)
 router.get("/home", checkLogin, async (req, res) => {
