@@ -22,7 +22,131 @@ var upload = multer({
   storage: storage,
 }).single("image");
 
-//insert user into databse route
+// Middleware to check session
+function checkLogin(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect("/");
+  }
+  next();
+}
+
+// Prevent caching for all routes
+router.use((req, res, next) => {
+  res.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+});
+
+// Redirect logged-in users from login page to home
+router.get("/", (req, res) => {
+  if (req.session.user) {
+    return res.redirect("/home");
+  }
+  return res.render("index");
+});
+
+router.get('/signup',(req,res) => {
+  return res.render("signup");
+})
+
+// Login route
+router.post("/login", async(req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide both email and password",
+      });
+    }
+
+    const user = await Logins.findOne({ email: email });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    req.session.user = {email : user.email, name : user.name};
+
+    return res.json({
+      success: true,
+      message: "Login successful! Redirecting...",
+      redirectUrl: "/home",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error, please try again later",
+    });
+  }
+});
+
+
+// Sign up route
+router.post('/signup', async(req,res) => {
+  try{
+
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Please fill out all fields!' });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Email already registered!' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new Logins({ name, email, password: hashedPassword });
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: 'Signup successful! Redirecting...',
+      redirectUrl: '/',
+    });
+
+  }catch(err){
+    res.status(500).json({
+      success: false,
+      message: "Server error, please try again later",
+    });
+  }
+})
+
+// Home route (requires login)
+router.get("/home", checkLogin, async (req, res) => {
+  try {
+    const userList = await User.find();
+    const name = req.session.user.name;
+    res.render("home", { name, cards, langs, userList });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+// Insert user into databse route
 router.post("/add", upload, async (req, res) => {
   try {
     console.log("add api");
@@ -114,7 +238,7 @@ router.post("/update/:id", upload, async (req, res) => {
 });
 
 
-//delete an user from the index page
+// Delete an user from the index page
 router.get("/delete/:id", async (req, res) => {
   try {
     console.log("delete API called");
@@ -147,108 +271,6 @@ router.get("/delete/:id", async (req, res) => {
       message: "Server error, please try again later",
     });
   }
-});
-
-// Middleware to check session
-function checkLogin(req, res, next) {
-  if (!req.session.user) {
-    return res.redirect("/");
-  }
-  next();
-}
-
-// Prevent caching for all routes
-router.use((req, res, next) => {
-  res.set(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, proxy-revalidate"
-  );
-  res.set("Pragma", "no-cache");
-  res.set("Expires", "0");
-  next();
-});
-
-// Redirect logged-in users from login page to home
-router.get("/", (req, res) => {
-  if (req.session.user) {
-    return res.redirect("/home");
-  }
-  return res.render("index");
-});
-
-router.get('/signup',(req,res) => {
-  return res.render("signup");
-})
-
-// Login route
-router.post("/login", (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = users.find(
-      (user) => user.email === email && user.password === password
-    );
-
-    if (user) {
-      req.session.user = user.email;
-      return res.json({
-        success: true,
-        message: "Login successful! Redirecting...",
-        redirectUrl: "/home",
-      });
-    } else {
-      return res.json({
-        success: false,
-        message: "Invalid username or password",
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Server error, please try again later",
-    });
-  }
-});
-
-router.post('/signup', async(req,res) => {
-  try{
-
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: 'Please fill out all fields!' });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: 'Email already registered!' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new Logins({ name, email, password: hashedPassword });
-    await user.save();
-
-    return res.json({
-      success: true,
-      message: 'Signup successful! Redirecting...',
-      redirectUrl: '/',
-    });
-
-  }catch(err){
-    res.status(500).json({
-      success: false,
-      message: "Server error, please try again later",
-    });
-  }
-})
-
-// Home route (requires login)
-router.get("/home", checkLogin, async (req, res) => {
-  const userList = await User.find();
-  const userEmail = req.session.user;
-  const name = userEmail.split("@")[0];
-  res.render("home", { name, cards, langs, userList });
 });
 
 // Logout route
