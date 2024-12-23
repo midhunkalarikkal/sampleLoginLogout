@@ -205,9 +205,6 @@ router.post("/update/:id", upload, async (req, res) => {
     const id = req.params.id;
     let new_image = req.body.old_image;
 
-    console.log("id : ",id);
-    console.log(typeof id);
-
     if (req.file) {
       new_image = req.file.filename;
       try {
@@ -217,12 +214,14 @@ router.post("/update/:id", upload, async (req, res) => {
       }
     }
 
-    await User.findByIdAndUpdate(id, {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
+    const savedUser = await User.findByIdAndUpdate(id, {
+      name: req.body.editname,
+      email: req.body.editemail,
+      phone: req.body.editphone,
       image: new_image,
     });
+
+    console.log("savedUser : ",savedUser);
 
     res.json({
       type: "success",

@@ -103,8 +103,76 @@
         </div>
     </section>
 
+    <div class="container my-5">
+        <h2 class="text-center mb-4">MERN Stack FAQ</h2>
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        What is the MERN stack?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        MERN stands for MongoDB, Express.js, React.js, and Node.js. It is a popular full-stack development technology stack used for building web applications.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Why is the MERN stack popular?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        The MERN stack is popular due to its JavaScript-based technologies, scalability, flexibility, and the ability to create end-to-end web applications using a single language.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        How does React fit into the MERN stack?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        React.js is the frontend library in the MERN stack, used to build dynamic user interfaces and handle client-side rendering for a seamless user experience.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        What are the main advantages of using MongoDB in the MERN stack?
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        MongoDB is a NoSQL database, offering flexibility, scalability, and the ability to store data in JSON-like documents, making it ideal for modern web applications.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Is the MERN stack suitable for large-scale applications?
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, the MERN stack is suitable for both small and large-scale applications, as it is scalable and capable of handling complex requirements with ease.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
-    <div class="container">
+
+    <div class="container py-4">
+        <h4 class="py-2 text-medium font-bold">Enrolled persons</h4>
         <div class="table-responsive ">
             <% if(userList !="" ){ %>
                 <table class="table table-stripped text-center my-4">
@@ -172,29 +240,29 @@
                 <div class="modal-body">
                     <form id="add-form" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" class="form-control form-control-lg"
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" id="name" name="name" class="form-control form-control-sm"
                                 placeholder="Enter name" required>
                             <small id="name-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" class="form-control form-control-lg"
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control form-control-sm"
                                 placeholder="Enter email" required>
                             <small id="email-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone" class="form-control form-control-lg"
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" id="phone" name="phone" class="form-control form-control-sm"
                                 placeholder="Enter phone" required>
                             <small id="phone-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label">Select image</label>
-                            <input type="file" id="image" name="image" class="form-control form-control-lg" required>
+                            <input type="file" id="image" name="image" class="form-control form-control-sm" required>
                         </div>
                         <div class="mb-3 d-grid">
-                            <button type="button" id="submitBtn" class="btn btn-success btn-lg">Add User</button>
+                            <button type="button" id="submitBtn" class="btn btn-success btn-sm">Add User</button>
                         </div>
                     </form>
                 </div>
@@ -213,25 +281,27 @@
                 <div class="modal-body">
                     <form id="editUserForm" enctype="multipart/form-data">
                         <div class="mb-3">
-                            <label for="name">Name</label>
-                            <input type="text" name="name" id="editname" class="form-control form-control-lg"
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" name="editname" id="editname" class="form-control form-control-sm"
                                 placeholder="Enter name" required>
+                            <small id="editname-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="editemail" class="form-control form-control-lg"
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="editemail" id="editemail" class="form-control form-control-sm"
                                 placeholder="Enter email" required>
+                            <small id="editemail-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
-                            <label for="phone">Phone</label>
-                            <input type="tel" name="phone" id="editphone" class="form-control form-control-lg"
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" name="editphone" id="editphone" class="form-control form-control-sm"
                                 placeholder="Enter phone" required>
+                            <small id="editphone-error" class="text-danger"></small>
                         </div>
-                        <input type="hidden" name="userId" id="edituserid">
                         <input type="hidden" name="userId" id="edituserid">
                         <div class="mb-3">
                             <label for="image" class="form-label">Select image</label>
-                            <input type="file" name="image" id="image" class="form-control form-control-lg">
+                            <input type="file" name="image" id="image" class="form-control form-control-sm">
                             <img src="" id="userImage" class="img-thumbnail mt-1" width="100" style="display:none;">
                         </div>
                         <input type="hidden" name="old_image" id="old_image">
@@ -268,14 +338,14 @@
             } else {
                 document.getElementById("name-error").textContent = "";
             }
-
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            
+            if (!/^[^\s@]+@gmail\.com$/.test(email)) {
                 document.getElementById("email-error").textContent = "Invalid email format.";
                 isValid = false;
             } else {
                 document.getElementById("email-error").textContent = "";
             }
-
+            
             if (!/^\d{10}$/.test(phone)) {
                 document.getElementById("phone-error").textContent = "Invalid phone number. Must be 10 digits.";
                 isValid = false;
@@ -396,11 +466,44 @@
             }
         }
 
+        function validateUpdateForm() {
+            let isValid = true;
+
+            const name = document.getElementById("editname").value.trim();
+            const email = document.getElementById("editemail").value.trim();
+            const phone = document.getElementById("editphone").value.trim();
+
+            if (!/^[a-zA-Z\s]+$/.test(name)) {
+                document.getElementById("editname-error").textContent = "Invalid name. Use only letters and spaces.";
+                isValid = false;
+            } else {
+                document.getElementById("editname-error").textContent = "";
+            }
+            
+            if (!/^[^\s@]+@gmail\.com$/.test(email)) {
+                document.getElementById("editemail-error").textContent = "Invalid email format.";
+                isValid = false;
+            } else {
+                document.getElementById("editemail-error").textContent = "";
+            }
+            
+            if (!/^\d{10}$/.test(phone)) {
+                document.getElementById("editphone-error").textContent = "Invalid phone number. Must be 10 digits.";
+                isValid = false;
+            } else {
+                document.getElementById("editphone-error").textContent = "";
+            }
+
+            return isValid;
+        }
+
+       
+
         ////// user data updating \\\\\\
         document.getElementById("editUserForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            if (!validateForm()) {
+            if(!validateUpdateForm()){
                 Swal.fire({
                     icon: "error",
                     title: "Validation Error",
@@ -408,9 +511,10 @@
                 });
                 return;
             }
-            const formData = new FormData(this);
+
+            const form = document.getElementById("editUserForm");
+            const formData = new FormData(form);
             const userId = document.getElementById("edituserid").value;
-            console.log("userid : ", userId);
 
             try {
                 const response = await fetch(`/update/${userId}`, {
