@@ -103,8 +103,8 @@ i {
   transition: 0.4s;
 }
 .submit:hover {
-  background: rgba(37, 95, 156, 0.937);
-  color: #fff;
+  background: rgba(31, 31, 31, 0.94);
+  color:rgb(255, 255, 255);
 }
 .signin {
   text-align: center;
