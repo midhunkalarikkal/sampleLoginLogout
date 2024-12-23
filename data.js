@@ -60,7 +60,7 @@ const cards = [
 ];
 
 const users = [
-  { email: 'sampleUser@gmail.com', password: 'Sample@123' },
+  { email: 'sampleuser@gmail.com', password: 'Sample@123' },
   { email: 'raze@gmail.com', password: 'Raze@123' }
 ];
 
