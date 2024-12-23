@@ -5,56 +5,74 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 const mongoose = require('mongoose');
 require('dotenv').config();
-var app = express();
+const MongoStore = require('connect-mongo');
 
+var app = express();
 var createError = require('http-errors');
 var indexRouter = require('./routes/index');
 
-//database connection
+// Database connection
 mongoose.connect(process.env.DB_URI)
-const db = mongoose.connection
-db.on("error" , (error) => console.log("Error"))
-db.once("open" , ()=> console.log("Connected to the databse"))
+  .then(() => console.log('Connected to the database'))
+  .catch((error) => console.error('Error connecting to database:', error));
 
 // Middleware
 app.use(cookieParser());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({
-  secret: process.env.SECRET,
 
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: false,  
-    httpOnly: true,  
-  }
-}));
-app.use("/static",express.static(path.join(__dirname, 'public')));
-app.use(express.static('uploads'));
+app.use(
+  session({
+    secret: process.env.SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.DB_URI,
+      ttl: 24 * 60 * 60,
+    }),
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === 'production', 
+      httpOnly: true,
+    },
+  })
+);
+
+app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 app.use((req, res, next) => {
   if (req.session.message) {
-    console.log("session : ",req.session.message);
     res.locals.message = req.session.message;
-    console.log("local : ",res.locals.message);
-    delete req.session.message; // Ensure the message is shown only once
+    delete req.session.message;
   } else {
     res.locals.message = null;
   }
   next();
 });
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // Routes
 app.use('/', indexRouter);
 
-app.listen(3005 , ()=> {
-  console.log("Server listening to port 3005");
-})
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+const PORT = process.env.PORT || 3005;
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
