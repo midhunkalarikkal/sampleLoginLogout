@@ -3,6 +3,7 @@ var router = express.Router();
 const User = require("../models/users");
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
 const { langs, cards, users } = require("../data");
 
 //image upload
@@ -33,101 +34,121 @@ router.post("/add", upload, async (req, res) => {
 
     await user.save();
 
-      req.session.message = {
-        type: "success",
-        message: "User added successfully",
-      };
-      res.redirect("/home");
-      
+    res.json({
+      type: "success",
+      message: "User added successfully!",
+    });
   } catch (err) {
-    req.session.message = {
-      type: "danger",
-      message: "User adding error.",
-    };
+    res.json({
+      type: "error",
+      message: "Server error. Please try again.",
+    });
   }
 });
 
-//Edit an user route to get the editing page
-router.get("/edit/:id", async(req, res) => {
+// Get user data for editing (returns JSON)
+router.get("/edit/:id", async (req, res) => {
   try {
-    let id = req.params.id;
+    const id = req.params.id;  
     const user = await User.findById(id);
-    if (user === null) {
-      res.redirect("/");
-    } else {
-      console.log("fetched user : ",user);
-      req.session.message = {
-        type: "success",
-        message: "User fetched successfully",
-      };
+    if (!user) {
+      return res.status(404).json({
+        type: "danger",
+        message: "User not found",
+      });
     }
+
+    return res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      image: user.image,
+    });
   } catch (err) {
-    res.json({ message: err.message, type: "danger" });
+    return res.status(500).json({
+      type: "danger",
+      message: "Server error, please try again later",
+    });
   }
 });
 
+// Update user data
+router.post("/update/:id", upload, async (req, res) => {
+  try {
+    const id = req.params.id;
+    let new_image = req.body.old_image;
 
-//Edit an user route to get the editing page
-router.post("/update/:id", upload , async(req,res) => {
+    console.log("id : ",id);
+    console.log(typeof id);
 
-  try{
-    let id = req.params.id;
-    let new_image = "";
-
-  if(req.file){
-      new_image = req.file.filename
-      try{
-          fs.unlinkSync("./uploads/"+req.body.old_image)
-      }catch(err){
-          console.log(err)
+    if (req.file) {
+      new_image = req.file.filename;
+      try {
+        fs.unlinkSync("./uploads/" + req.body.old_image);
+      } catch (err) {
+        console.log(err);
       }
-  }else{
-      new_image = req.body.old_image
-  }
+    }
 
-  User.findByIdAndUpdate(id ,{
-      name : req.body.name,
-      email : req.body.email,
-      phone : req.body.phone,
-      image : new_image,
-  })
+    await User.findByIdAndUpdate(id, {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      image: new_image,
+    });
 
-  req.session.message = {
-    type : "success",
-    message : "User updated succesfully"
-}
-  }catch(err){
-    res.json({message : err.message, type: "danger"})
+    res.json({
+      type: "success",
+      message: "User updated successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({
+      type: "danger",
+      message: "Server error, please try again",
+    });
   }
 });
+
 
 //delete an user from the index page
-router.get('/delete/:id', async(req,res)=>{
-  try{
-    let id = req.params.id
-    const user = await User.find(id);
-    const deleteImage = fs.unlinkSync("./uploads/"+user.image);
-    const deleteuser = await User.findByIdAndDelete(id)
+router.get("/delete/:id", async (req, res) => {
+  try {
+    console.log("delete API called");
+    const id = req.params.id;
+    console.log("User ID:", id);
 
-    if(deleteuser){
-      req.session.message = {
-        type : "success",
-        message : "User deleted succesfully"
-      }
-    }else{
-      req.session.message = {
-        type : "danger",
-        message : "User deletion error, please try again"
-      }
+    const user = await User.findById(id);
+    if (!user) {
+      return res.json({
+        type: "danger",
+        message: "User not found",
+      });
     }
-  }catch(err){
-    res.json({message : err.message , type : "danger"})
+
+    const imagePath = path.join(__dirname, "../uploads", user.image);
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res.json({
+      type: "success",
+      message: "User deleted successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      type: "danger",
+      message: "Server error, please try again later",
+    });
   }
-})
+});
 
 // Middleware to check session
 function checkLogin(req, res, next) {
-  console.log("checkingLogin: ", req.session.user);
   if (!req.session.user) {
     return res.redirect("/");
   }
@@ -155,22 +176,41 @@ router.get("/", (req, res) => {
 
 // Login route
 router.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  const user = users.find(
-    (user) => user.email === email && user.password === password
-  );
-  if (user) {
-    req.session.user = user.email;
-    res.redirect("/home");
-  } else {
-    res.render("index", { message: "Invalid username or password" });
+  try {
+    const { email, password } = req.body;
+
+    // Find user with matching email and password
+    const user = users.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (user) {
+      req.session.user = user.email;
+      // Send success response
+      return res.json({
+        success: true,
+        message: "Login successful! Redirecting...",
+        redirectUrl: "/home",
+      });
+    } else {
+      // Send error response
+      return res.json({
+        success: false,
+        message: "Invalid username or password",
+      });
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error, please try again later",
+    });
   }
 });
 
 // Home route (requires login)
-router.get("/home", checkLogin, async(req, res) => {
+router.get("/home", checkLogin, async (req, res) => {
   const userList = await User.find();
-  console.log("userList : ", userList);
   const userEmail = req.session.user;
   const name = userEmail.split("@")[0];
   res.render("home", { name, cards, langs, userList });

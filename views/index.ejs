@@ -28,7 +28,7 @@
           <div class="input-box">
 
             <header>Sign In</header>
-            <form action="/login" method="POST">
+            <form id="login-form">
               <div class="input-field">
                 <input type="email" class="input" id="email" name="email" required>
                 <label for="email">Email</label>
@@ -38,7 +38,7 @@
                 <label for="pass">Password</label>
               </div>
               <div class="input-field">
-                <input type="submit" class="submit" value="Sign In">
+                <button type="submit" class="submit">Sign In</button>
               </div>
             </form>
 
@@ -56,15 +56,69 @@
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <% if (locals.message) { %>
-    <script>
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: '<%= message %>',
-      });
-    </script>
-  <% } %>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const form = document.getElementById("login-form");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); // Prevent default form submission
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("pass").value;
+
+      // Client-side validation
+      if (!email || !password) {
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Information",
+          text: "Please fill out both fields!",
+        });
+        return;
+      }
+
+      try {
+        // Send login data using fetch
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success message
+          Swal.fire({
+            icon: "success",
+            title: "Login Successful",
+            text: data.message,
+            timer: 2000, // Display duration in milliseconds (2 seconds)
+            showConfirmButton: false, // Remove the OK button
+            allowOutsideClick: false, // Prevent dismissing by clicking outside
+          }).then(() => {
+            // Redirect to the home page after timer ends
+            window.location.href = data.redirectUrl;
+          });
+        } else {
+          // Show error message
+          Swal.fire({
+            icon: "error",
+            title: "Login Failed",
+            text: data.message,
+          });
+        }
+      } catch (err) {
+        console.error("Error during login:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred, please try again later",
+        });
+      }
+    });
+  </script>
 </body>
 
 </html>

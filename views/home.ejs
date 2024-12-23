@@ -14,13 +14,11 @@
     <link href="https://cdn.datatables.net/v/bs4/dt-1.13.8/datatables.min.css" rel="stylesheet">
 </head>
 
-<body>
+
+<body class="relative">
 
 
-
-    <!--Navbar-->
-
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 fixed-top">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
         <div class="container">
             <a class="navbar-brand">Hi Welcom <%= name %></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
@@ -48,26 +46,17 @@
     <!--Showcase-->
     <section class="bg-dark text-light p-5 text-center text-sm-start p-lg-0 pt-lg-5">
         <div class="container">
-            <% if(message) { %>
-                <div class="alert alert-dismissible fade show alert-<%=(message.type)%>" role="alert"
-                    id="alert-message">
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="close"></button>
-                    <strong>
-                        <%= message.message %>
-                    </strong>
+            <div class="d-sm-flex align-items-center justify-content-between">
+                <div class="pt-5">
+                    <h1>Become a <span class="custom-text-color">MERN Stack Developer</span></h1>
+                    <p class="lead">
+                        "Coding is the art of turning coffee into code, fueled by passion and powered by logic."
+                    </p>
+                    <button class="btn btn-primary btn-lg my-4" data-bs-toggle="modal" data-bs-target="#add">Add
+                        new person</button>
                 </div>
-                <%}%>
-                    <div class="d-sm-flex align-items-center justify-content-between">
-                        <div class="pt-5">
-                            <h1>Become a <span class="custom-text-color">MERN Stack Developer</span></h1>
-                            <p class="lead">
-                                "Coding is the art of turning coffee into code, fueled by passion and powered by logic."
-                            </p>
-                            <button class="btn btn-primary btn-lg my-4" data-bs-toggle="modal" data-bs-target="#add">Add
-                                new person</button>
-                        </div>
-                        <img src="/static/images/showcase.svg" class="img-fluid w-50 d-none d-sm-block" alt="">
-                    </div>
+                <img src="/static/images/showcase.svg" class="img-fluid w-50 d-none d-sm-block" alt="">
+            </div>
         </div>
     </section>
     <!--Showcase-->
@@ -123,6 +112,7 @@
         </div>
     </section>
 
+
     <div class="container">
 
         <div class="table-responsive ">
@@ -156,10 +146,12 @@
                                     <%= row.phone %>
                                 </td>
                                 <td>
-                                    <a href="/edit/<%= row._id%>" class="text-success"><i
-                                            class="fas fa-edit fa-lg mx-1"></i></a>
-                                    <a href="/delete/<%= row._id%>" class="text-danger"><i
-                                            class="fas fa-trash fa-lg mx-1"></i></a>
+                                    <a href="#" class="text-success" onclick="editUser('<%= row._id %>')">
+                                        <i class="fas fa-edit fa-lg mx-1"></i>
+                                    </a>
+                                    <a href="#" class="text-danger" onclick="deleteUser('<%= row._id %>')">
+                                        <i class="fas fa-trash fa-lg mx-1"></i>
+                                    </a>
                                 </td>
                             </tr>
                             <% }) %>
@@ -181,7 +173,7 @@
     </footer>
     <!--Footer section-->
 
-    <!-- Add Modal -->
+    <!-- Modal for adding new user -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="enrollLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -190,42 +182,81 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/add" method="POST" id="add-form" enctype="multipart/form-data">
+                    <form id="add-form" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name">Name</label>
                             <input type="text" id="name" name="name" class="form-control form-control-lg"
-                                placeholder="Enter name" required onchange="validateNameOnChange()">
+                                placeholder="Enter name" required>
                             <small id="name-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" class="form-control form-control-lg"
-                                placeholder="Enter email" required onchange="validateEmailOnChange()">
+                                placeholder="Enter email" required>
                             <small id="email-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
                             <label for="phone">Phone</label>
                             <input type="tel" id="phone" name="phone" class="form-control form-control-lg"
-                                placeholder="Enter phone" required onchange="validatePhoneOnChange()">
+                                placeholder="Enter phone" required>
                             <small id="phone-error" class="text-danger"></small>
                         </div>
                         <div class="mb-3">
                             <label for="image" class="form-label">Select image</label>
-                            <input type="file" name="image" class="form-control form-control-lg" required>
+                            <input type="file" id="image" name="image" class="form-control form-control-lg" required>
                         </div>
                         <div class="mb-3 d-grid">
-                            <input type="submit" name="submit" value="Add User" class="btn btn-success btn-lg"
-                                id="submitBtn">
+                            <button type="button" id="submitBtn" class="btn btn-success btn-lg">Add User</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Add Modal -->
 
+    <!-- Modal for Edit User -->
+    <div class="modal" tabindex="-1" id="editUserModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="editname" class="form-control form-control-lg"
+                                placeholder="Enter name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="editemail" class="form-control form-control-lg"
+                                placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone">Phone</label>
+                            <input type="tel" name="phone" id="editphone" class="form-control form-control-lg"
+                                placeholder="Enter phone" required>
+                        </div>
+                        <input type="hidden" name="userId" id="edituserid">
+                        <input type="hidden" name="userId" id="edituserid">
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Select image</label>
+                            <input type="file" name="image" id="image" class="form-control form-control-lg">
+                            <img src="" id="userImage" class="img-thumbnail mt-1" width="100" style="display:none;">
+                        </div>
+                        <input type="hidden" name="old_image" id="old_image">
+                        <div class="mb-3 d-grid">
+                            <input type="submit" value="Update User" class="btn btn-success btn-lg">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="/static/utils/validator.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
@@ -234,42 +265,191 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.datatables.net/v/bs4/dt-1.13.8/datatables.min.js"></script>
     <script>
-        let submitButton = document.getElementById('submitBtn');
-        function validateNameOnChange() {
-            const name = document.getElementById("name").value;
-            const error = document.getElementById("name-error");
-            if (!validateName(name)) {
-                error.textContent = "Invalid name. Use only letters and spaces.";
-                submitButton.classList.add('disabled');
+
+        ////// form validation \\\\\\
+        function validateForm() {
+            let isValid = true;
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+
+            if (!/^[a-zA-Z\s]+$/.test(name)) {
+                document.getElementById("name-error").textContent = "Invalid name. Use only letters and spaces.";
+                isValid = false;
             } else {
-                error.textContent = "";
-                submitButton.classList.remove('disabled');
+                document.getElementById("name-error").textContent = "";
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById("email-error").textContent = "Invalid email format.";
+                isValid = false;
+            } else {
+                document.getElementById("email-error").textContent = "";
+            }
+
+            if (!/^\d{10}$/.test(phone)) {
+                document.getElementById("phone-error").textContent = "Invalid phone number. Must be 10 digits.";
+                isValid = false;
+            } else {
+                document.getElementById("phone-error").textContent = "";
+            }
+
+            return isValid;
+        }
+
+        ////// Adding a new user \\\\\\
+        document.getElementById("submitBtn").addEventListener("click", async function () {
+            if (!validateForm()) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Validation Error",
+                    text: "Please correct the errors before submitting.",
+                });
+                return;
+            }
+
+            const form = document.getElementById("add-form");
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("/add", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                Swal.fire({
+                    icon: result.type,
+                    title: result.message,
+                }).then(() => {
+                    if (result.type === "success") {
+                        form.reset();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                })
+
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Server Error",
+                    text: "Something went wrong. Please try again.",
+                });
+            }
+        });
+
+
+        ////// Deleting a user \\\\\\
+        async function deleteUser(userId) {
+            const confirmed = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, keep it',
+            });
+
+            if (confirmed.isConfirmed) {
+                try {
+                    const response = await fetch(`/delete/${userId}`, {
+                        method: "GET",
+                    });
+
+                    const result = await response.json();
+
+                    Swal.fire({
+                        icon: result.type,
+                        title: result.message,
+                    }).then(() => {
+                        if (result.type === "success") {
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        }
+                    })
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        text: 'Something went wrong. Please try again.',
+                    });
+                }
             }
         }
 
-        function validateEmailOnChange() {
-            const email = document.getElementById("email").value;
-            const error = document.getElementById("email-error");
-            if (!validateEmail(email)) {
-                error.textContent = "Invalid email format.";
-                submitButton.classList.add('disabled');
-            } else {
-                error.textContent = "";
-                submitButton.classList.remove('disabled');
+        ////// Fetching the edit user details \\\\\\
+        async function editUser(userId) {
+            try {
+                const response = await fetch(`/edit/${userId}`);
+                const user = await response.json();
+
+                if (user && user._id) {
+                    document.getElementById("editname").value = user.name;
+                    document.getElementById("editemail").value = user.email;
+                    document.getElementById("editphone").value = user.phone;
+                    document.getElementById("old_image").value = user.image;
+                    document.getElementById("edituserid").value = user._id;
+                    document.getElementById("userImage").src = `/${user.image}`;
+                    document.getElementById("userImage").style.display = 'block';
+
+                    $('#editUserModal').modal('show');
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to fetch user data.',
+                });
             }
         }
 
-        function validatePhoneOnChange() {
-            const phone = document.getElementById("phone").value;
-            const error = document.getElementById("phone-error");
-            if (!validatePhone(phone)) {
-                error.textContent = "Invalid phone number. Must be 10 digits.";
-                submitButton.classList.add('disabled');
-            } else {
-                error.textContent = "";
-                submitButton.classList.remove('disabled');
+        ////// user data updating \\\\\\
+        document.getElementById("editUserForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Validation Error",
+                    text: "Please correct the errors before submitting.",
+                });
+                return;
             }
-        }
+            const formData = new FormData(this);
+            const userId = document.getElementById("edituserid").value;
+            console.log("userid : ", userId);
+
+            try {
+                const response = await fetch(`/update/${userId}`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                Swal.fire({
+                    icon: result.type,
+                    title: result.message,
+                }).then(() => {
+                    if (result.type === "success") {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                })
+
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to update user data.',
+                });
+            }
+        });
 
         $(document).ready(function () {
             $("table").DataTable({
@@ -277,13 +457,7 @@
             })
         })
 
-        setTimeout(function () {
-            const alert = document.getElementById("alert-message");
-            if (alert) {
-                alert.style.display = "none";
-            }
-        }, 3000);
     </script>
-</body>
 
+</body>
 </html>

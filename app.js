@@ -35,10 +35,17 @@ app.use(session({
 app.use("/static",express.static(path.join(__dirname, 'public')));
 app.use(express.static('uploads'));
 
-app.use((req,res,next)=>{
-  res.locals.message = req.session.message
-  delete req.session.message
-  next()
+
+app.use((req, res, next) => {
+  if (req.session.message) {
+    console.log("session : ",req.session.message);
+    res.locals.message = req.session.message;
+    console.log("local : ",res.locals.message);
+    delete req.session.message; // Ensure the message is shown only once
+  } else {
+    res.locals.message = null;
+  }
+  next();
 });
 
 // view engine setup
