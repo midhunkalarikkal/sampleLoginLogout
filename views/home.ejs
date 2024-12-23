@@ -30,7 +30,7 @@
                         <a href="#learn" class="nav-link">What You'll Learn</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#questions" class="nav-link">Questions</a>
+                        <a href="#accordings" class="nav-link">Questions</a>
                     </li>
                     <li class="nav-item">
                         <a href="/logout" class="nav-link">Logout</a>
@@ -103,7 +103,7 @@
         </div>
     </section>
 
-    <div class="container my-5">
+    <div class="container my-5" id="accordings">
         <h2 class="text-center mb-4">MERN Stack FAQ</h2>
         <div class="accordion" id="faqAccordion">
             <div class="accordion-item">
@@ -172,9 +172,9 @@
 
 
     <div class="container py-4">
-        <h4 class="py-2 text-medium font-bold">Enrolled persons</h4>
         <div class="table-responsive ">
             <% if(userList !="" ){ %>
+                <h4 class="py-2 text-medium font-bold">Enrolled persons</h4>
                 <table class="table table-stripped text-center my-4">
                     <thead>
                         <tr class="table-dark">

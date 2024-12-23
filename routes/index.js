@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const Logins = require('../models/logins');
 const bcrypt = require('bcrypt');
-const { langs, cards, users } = require("../data");
+const { langs, cards } = require("../data");
 
 //image upload
 var storage = multer.diskStorage({

@@ -23,13 +23,7 @@ const cards = [
   }
 ];
 
-const users = [
-  { email: 'sampleuser@gmail.com', password: 'Sample@123' },
-  { email: 'raze@gmail.com', password: 'Raze@123' }
-];
-
 module.exports = {
     langs,
     cards,
-    users
 }
