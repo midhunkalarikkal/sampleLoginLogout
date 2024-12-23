@@ -1,41 +1,5 @@
 const langs = ["HTML", "CSS", "JAVASCRIPT", "REACT", "NODEJS", "EXPRESS"]
-const students = [
-  {
-    id: 1,
-    name: "John Doe",
-    age: 20,
-    grade: "A",
-    subject: "Math",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    age: 22,
-    grade: "B",
-    subject: "History",
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    age: 19,
-    grade: "C",
-    subject: "English",
-  },
-  {
-    id: 4,
-    name: "Bob Wilson",
-    age: 21,
-    grade: "B+",
-    subject: "Science",
-  },
-  {
-    id: 5,
-    name: "Eve Davis",
-    age: 23,
-    grade: "A-",
-    subject: "Computer Science",
-  },
-];
+
 const cards = [
   {
     cardHeader: "Mongo DB",
@@ -66,7 +30,6 @@ const users = [
 
 module.exports = {
     langs,
-    students,
     cards,
     users
 }
