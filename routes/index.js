@@ -1,26 +1,9 @@
 var express = require("express");
 var router = express.Router();
 const User = require("../models/users");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
 const Logins = require('../models/logins');
 const bcrypt = require('bcrypt');
 const { langs, cards } = require("../data");
-
-//image upload
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
-  },
-});
-
-var upload = multer({
-  storage: storage,
-}).single("image");
 
 // Middleware to check session
 function checkLogin(req, res, next) {
@@ -91,7 +74,6 @@ router.post("/login", async(req, res) => {
       redirectUrl: "/home",
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).json({
       success: false,
       message: "Server error, please try again later",
@@ -139,33 +121,31 @@ router.get("/home", checkLogin, async (req, res) => {
   try {
     const userList = await User.find();
     const name = req.session.user.name;
-    res.render("home", { name, cards, langs, userList });
+    return res.render("home", { name, cards, langs, userList });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+    return res.status(500).send("Server error");
   }
 });
 
 // Insert user into databse route
-router.post("/add", upload, async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
-    console.log("add api");
 
+    console.log(req.body);
     const user = new User({
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
-      image: req.file.filename,
     });
 
     await user.save();
 
-    res.json({
+    return res.json({
       type: "success",
       message: "User added successfully!",
     });
   } catch (err) {
-    res.json({
+    return res.json({
       type: "error",
       message: "Server error. Please try again.",
     });
@@ -189,7 +169,6 @@ router.get("/edit/:id", async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      image: user.image,
     });
   } catch (err) {
     return res.status(500).json({
@@ -200,36 +179,39 @@ router.get("/edit/:id", async (req, res) => {
 });
 
 // Update user data
-router.post("/update/:id", upload, async (req, res) => {
+router.post("/update/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    let new_image = req.body.old_image;
 
-    if (req.file) {
-      new_image = req.file.filename;
-      try {
-        fs.unlinkSync("./uploads/" + req.body.old_image);
-      } catch (err) {
-        console.log(err);
-      }
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.json({
+        type: "danger",
+        message: "User not found",
+      });
     }
 
     const savedUser = await User.findByIdAndUpdate(id, {
-      name: req.body.editname,
-      email: req.body.editemail,
-      phone: req.body.editphone,
-      image: new_image,
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
     });
 
-    console.log("savedUser : ",savedUser);
+    if(savedUser){
+      return res.json({
+        type: "success",
+        message: "User updated successfully",
+      });
+    }else{
+      return res.json({
+        type: "success",
+        message: "User updating error, please try again.",
+      });
+    }
 
-    res.json({
-      type: "success",
-      message: "User updated successfully",
-    });
   } catch (err) {
     console.error(err);
-    res.json({
+    return res.json({
       type: "danger",
       message: "Server error, please try again",
     });
@@ -240,9 +222,7 @@ router.post("/update/:id", upload, async (req, res) => {
 // Delete an user from the index page
 router.get("/delete/:id", async (req, res) => {
   try {
-    console.log("delete API called");
     const id = req.params.id;
-    console.log("User ID:", id);
 
     const user = await User.findById(id);
     if (!user) {
@@ -252,11 +232,6 @@ router.get("/delete/:id", async (req, res) => {
       });
     }
 
-    const imagePath = path.join(__dirname, "../uploads", user.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
-
     await User.findByIdAndDelete(id);
 
     return res.json({
@@ -264,7 +239,6 @@ router.get("/delete/:id", async (req, res) => {
       message: "User deleted successfully",
     });
   } catch (err) {
-    console.error(err);
     return res.json({
       type: "danger",
       message: "Server error, please try again later",
@@ -278,7 +252,7 @@ router.get("/logout", (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.redirect("/");
+    return res.redirect("/");
   });
 });
 

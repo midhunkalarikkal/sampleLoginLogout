@@ -179,7 +179,6 @@
                     <thead>
                         <tr class="table-dark">
                             <th class="text-center">ID</th>
-                            <th class="text-center">Image</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Email</th>
                             <th class="text-center">Phone</th>
@@ -192,7 +191,6 @@
                                 <td>
                                     <%= index %>
                                 </td>
-                                <td><img src=" <%= row.image %> " width="50" class="img-thumbnal" />
                                 </td>
                                 <td>
                                     <%= row.name %>
@@ -257,10 +255,6 @@
                                 placeholder="Enter phone" required>
                             <small id="phone-error" class="text-danger"></small>
                         </div>
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Select image</label>
-                            <input type="file" id="image" name="image" class="form-control form-control-sm" required>
-                        </div>
                         <div class="mb-3 d-grid">
                             <button type="button" id="submitBtn" class="btn btn-success btn-sm">Add User</button>
                         </div>
@@ -299,14 +293,8 @@
                             <small id="editphone-error" class="text-danger"></small>
                         </div>
                         <input type="hidden" name="userId" id="edituserid">
-                        <div class="mb-3">
-                            <label for="image" class="form-label">Select image</label>
-                            <input type="file" name="image" id="image" class="form-control form-control-sm">
-                            <img src="" id="userImage" class="img-thumbnail mt-1" width="100" style="display:none;">
-                        </div>
-                        <input type="hidden" name="old_image" id="old_image">
                         <div class="mb-3 d-grid">
-                            <input type="submit" value="Update User" class="btn btn-success btn-lg">
+                            <input type="submit" value="Update User" class="btn btn-success btn-sm">
                         </div>
                     </form>
                 </div>
@@ -368,12 +356,19 @@
             }
 
             const form = document.getElementById("add-form");
-            const formData = new FormData(form);
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+
+            const data = {name, email, phone};
 
             try {
                 const response = await fetch("/add", {
                     method: "POST",
-                    body: formData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
                 });
 
                 const result = await response.json();
@@ -450,10 +445,7 @@
                     document.getElementById("editname").value = user.name;
                     document.getElementById("editemail").value = user.email;
                     document.getElementById("editphone").value = user.phone;
-                    document.getElementById("old_image").value = user.image;
                     document.getElementById("edituserid").value = user._id;
-                    document.getElementById("userImage").src = `/${user.image}`;
-                    document.getElementById("userImage").style.display = 'block';
 
                     $('#editUserModal').modal('show');
                 }
@@ -512,14 +504,20 @@
                 return;
             }
 
-            const form = document.getElementById("editUserForm");
-            const formData = new FormData(form);
+            const name = document.getElementById("editname").value;
+            const email = document.getElementById("editemail").value;
+            const phone = document.getElementById("editphone").value;
             const userId = document.getElementById("edituserid").value;
+
+            const data = {name, email, phone};
 
             try {
                 const response = await fetch(`/update/${userId}`, {
                     method: "POST",
-                    body: formData,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
                 });
 
                 const result = await response.json();
