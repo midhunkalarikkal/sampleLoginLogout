@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="col-md-6 right">
-          
+
           <div class="input-box">
             <header>Sign In</header>
             <form id="login-form">
@@ -54,23 +54,48 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
+
+   
+
     const form = document.getElementById("login-form");
 
     //////  User login \\\\\\
     form.addEventListener("submit", async (e) => {
-      e.preventDefault(); 
+      e.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("pass").value;
+      const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("pass").value;
 
-      if (!email || !password) {
-        Swal.fire({
-          icon: "warning",
-          title: "Missing Information",
-          text: "Please fill out both fields!",
-        });
-        return;
-      }
+            const emailRegex = /^[^\s@]+@gmail\.com$/;
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,20}$/;
+
+            if (!email || !password) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Missing Information",
+                    text: "Please fill out all fields!",
+                });
+                return;
+            }
+
+            if (!emailRegex.test(email)) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Invalid Email",
+                    text: "Please enter a valid email address.",
+                });
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Weak Password",
+                    text: "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and be at most 20 characters long.",
+                });
+                return;
+            }
 
       try {
         const response = await fetch("/login", {
@@ -88,9 +113,9 @@
             icon: "success",
             title: "Login Successful",
             text: data.message,
-            timer: 2000, 
-            showConfirmButton: false, 
-            allowOutsideClick: false, 
+            timer: 2000,
+            showConfirmButton: false,
+            allowOutsideClick: false,
           }).then(() => {
             window.location.href = data.redirectUrl;
           });
