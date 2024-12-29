@@ -93,6 +93,7 @@
             }
 
       try {
+        showLoading();
         const response = await fetch("/login", {
           method: "POST",
           headers: {
@@ -104,6 +105,7 @@
         const data = await response.json();
 
         if (data.success) {
+          Swal.close();
           Swal.fire({
             icon: "success",
             title: "Login Successful",
@@ -115,6 +117,7 @@
             window.location.href = data.redirectUrl;
           });
         } else {
+          Swal.close();
           Swal.fire({
             icon: "error",
             title: "Login Failed",
@@ -122,6 +125,7 @@
           });
         }
       } catch (err) {
+        Swal.close();
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -129,6 +133,19 @@
         });
       }
     });
+
+    function showLoading(){
+            Swal.close();
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
   </script>
 </body>
 

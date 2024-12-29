@@ -363,6 +363,7 @@
             const data = {name, email, phone};
 
             try {
+                showLoading();
                 const response = await fetch("/add", {
                     method: "POST",
                     headers: {
@@ -372,7 +373,7 @@
                 });
 
                 const result = await response.json();
-
+                Swal.close();
                 Swal.fire({
                     icon: result.type,
                     title: result.message,
@@ -386,6 +387,7 @@
                 })
 
             } catch (error) {
+                Swal.close();
                 Swal.fire({
                     icon: "error",
                     title: "Server Error",
@@ -408,12 +410,13 @@
 
             if (confirmed.isConfirmed) {
                 try {
+                    showLoading();
                     const response = await fetch(`/delete/${userId}`, {
                         method: "GET",
                     });
 
                     const result = await response.json();
-
+                    Swal.close();
                     Swal.fire({
                         icon: result.type,
                         title: result.message,
@@ -426,6 +429,7 @@
                     })
 
                 } catch (error) {
+                    Swal.close();
                     Swal.fire({
                         icon: 'error',
                         title: 'Server Error',
@@ -512,6 +516,7 @@
             const data = {name, email, phone};
 
             try {
+                showLoading();
                 const response = await fetch(`/update/${userId}`, {
                     method: "POST",
                     headers: {
@@ -521,6 +526,7 @@
                 });
 
                 const result = await response.json();
+                Swal.close();
                 Swal.fire({
                     icon: result.type,
                     title: result.message,
@@ -533,6 +539,7 @@
                 })
 
             } catch (error) {
+                Swal.close();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -546,6 +553,18 @@
                 order: [0, 'desc']
             })
         })
+
+        function showLoading(){
+            Swal.fire({
+                title: 'Loading...',
+                text: 'Please wait.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+        }
 
     </script>
 

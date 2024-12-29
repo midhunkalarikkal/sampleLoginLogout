@@ -26,19 +26,28 @@ router.use((req, res, next) => {
 
 // Redirect logged-in users from login page to home
 router.get("/", (req, res) => {
-  if (req.session.user) {
-    return res.redirect("/home");
+  try{
+    if (req.session.user) {
+      return res.redirect("/home");
+    }
+    return res.render("index");
+  }catch(err){
+    return res.render('error', { message: "Something went wrong", error: { status: 404 } });
   }
-  return res.render("index");
 });
 
 router.get('/signup',(req,res) => {
-  return res.render("signup");
+  try{
+    return res.render("signup");
+  }catch(err){
+    return res.render('error', { message: "Something went wrong", error: { status: 404 } });
+  }
 })
 
 // Login route
 router.post("/login", async(req, res) => {
   try {
+    console.log("login")
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -123,7 +132,7 @@ router.get("/home", checkLogin, async (req, res) => {
     const name = req.session.user.name;
     return res.render("home", { name, cards, langs, userList });
   } catch (err) {
-    return res.status(500).send("Server error");
+    return res.render('error', { message: "Something went wrong", error: { status: 404 } });
   }
 });
 
@@ -248,12 +257,16 @@ router.get("/delete/:id", async (req, res) => {
 
 // Logout route
 router.get("/logout", (req, res, next) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return next(err);
-    }
-    return res.redirect("/");
-  });
+  try{
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/");
+    });
+  }catch(err){
+    return res.render('error', { message: "Something went wrong", error: { status: 404 } });
+  }
 });
 
 module.exports = router;
